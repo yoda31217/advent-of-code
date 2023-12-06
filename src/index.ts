@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 const [year, day, part] = process.argv.slice(2);
 
-const inputTest = readFileSync(`${year}/${day}/aoc-${year}-${day}-input-test.txt`, { encoding: 'utf-8' });
+const inputTest = readFileSync(`${year}/${day}/aoc-${year}-${day}-part-${part}-input-test.txt`, { encoding: 'utf-8' });
 const input = readFileSync(`${year}/${day}/aoc-${year}-${day}-input.txt`, { encoding: 'utf-8' });
 
 const solution = require(`./${year}/${day}/aoc-${year}-${day}-part-${part}-solution`);
