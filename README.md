@@ -28,4 +28,4 @@ For example:
 Everything is inside `./src` directory. Bootstrappers are `./run.sh` and `./src/index.ts` files.
 
 Every solution - is a TypeScript module with exported `function calc(input: string): any`.
-Which is called from `./src/index.ts` with appropriate arguments.
+Which is called from `./src/index.ts` with provided arguments.
