@@ -1,6 +1,10 @@
 export function calc(input: string) {
-  let time: number = +input.split('\n')[0].split(':')[1].replace(/\s+/g, '');
-  let distance: number = +input.split('\n')[1].split(':')[1].replace(/\s+/g, '');
+  const [time, distance]: number[] = input
+    .trim()
+    .split('\n')
+    .map((line) => line.split(/:/)[1])
+    .map((line) => line.replace(/\s+/g, ''))
+    .map(Number);
 
   let waysToWinCount: number = 0;
 

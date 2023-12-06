@@ -1,17 +1,8 @@
 export function calc(input: string) {
-  let times: number[] = input
-    .split('\n')[0]
-    .split(':')[1]
+  const [times, distances]: number[][] = input
     .trim()
-    .split(/\s+/)
-    .map((s) => +s.trim());
-
-  let distances: number[] = input
-    .split('\n')[1]
-    .split(':')[1]
-    .trim()
-    .split(/\s+/)
-    .map((s) => +s.trim());
+    .split('\n')
+    .map((line) => line.split(/:\s+/)[1].split(/\s+/).map(Number));
 
   return times
     .map((time: number, index: number) => {
