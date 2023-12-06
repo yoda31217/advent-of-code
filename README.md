@@ -1,6 +1,6 @@
 # `Advent of Code` Challenge Solutions
 
-Here you can see my solutions for different (AoC)[https://adventofcode.com/] day challenges.
+Here you can see my solutions for different [AoC](https://adventofcode.com/) day challenges.
 
 ### Requirements
 
