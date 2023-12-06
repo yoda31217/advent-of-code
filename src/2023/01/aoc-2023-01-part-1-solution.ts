@@ -1,5 +1,4 @@
 let numbers: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-let numbers2: string[] = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 
 export function calc(input: string) {
   return input
@@ -11,16 +10,10 @@ export function calc(input: string) {
 
       for (let i = 0; i < line.length; i++) {
         for (let j = 0; j < numbers.length; j++) {
-          if (
-            calibrationValueLeftDigit === undefined &&
-            (line.slice(i).startsWith(numbers[j]) || line.slice(i).startsWith(numbers2[j]))
-          ) {
+          if (calibrationValueLeftDigit === undefined && line.slice(i).startsWith(numbers[j])) {
             calibrationValueLeftDigit = j;
           }
-          if (
-            calibrationValueRightDigit === undefined &&
-            (line.slice(-1 - i).startsWith(numbers[j]) || line.slice(-1 - i).startsWith(numbers2[j]))
-          ) {
+          if (calibrationValueRightDigit === undefined && line.slice(-1 - i).startsWith(numbers[j])) {
             calibrationValueRightDigit = j;
           }
         }
