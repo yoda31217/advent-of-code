@@ -1,11 +1,12 @@
 export function calc(input: string) {
-  let times = input
+  let times: number[] = input
     .split('\n')[0]
     .split(':')[1]
     .trim()
     .split(/\s+/)
     .map((s) => +s.trim());
-  let distances = input
+
+  let distances: number[] = input
     .split('\n')[1]
     .split(':')[1]
     .trim()
@@ -13,10 +14,10 @@ export function calc(input: string) {
     .map((s) => +s.trim());
 
   return times
-    .map((time, index) => {
-      let distance = distances[index];
+    .map((time: number, index: number) => {
+      let distance: number = distances[index];
 
-      let waysToWinCount = 0;
+      let waysToWinCount: number = 0;
 
       for (let i = 0; i <= time; i++) {
         if ((time - i) * i >= distance) {
@@ -26,5 +27,5 @@ export function calc(input: string) {
 
       return waysToWinCount;
     })
-    .reduce((result, waysToWinCount) => result * waysToWinCount, 1);
+    .reduce((result: number, waysToWinCount: number) => result * waysToWinCount, 1);
 }
