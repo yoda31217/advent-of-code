@@ -39,3 +39,7 @@ export function gridify(lines: string[]): Grid<string> {
     return line.split('').map((char, x) => [char, x, y, lines]);
   }) as [string, number, number, string[]][];
 }
+
+export function splitGrid(str: string) {
+  return splitLines(str).map((s) => s.split(''));
+}

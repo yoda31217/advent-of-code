@@ -1,115 +1,72 @@
-import { zip } from 'lodash';
-import { splitLines } from '../../utils/strings';
+import { rotateGridRight } from '../../utils/arrays';
+import { splitGrid } from '../../utils/strings';
 
-function north(grid) {
-  let freeRows = new Array(grid[0].length).fill(0);
+function tiltNorth(grid: string[][]) {
+  let nextFreeLineIndex = new Array(grid[0].length).fill(0);
 
   for (let lineIndex = 0; lineIndex < grid.length; lineIndex++) {
     let line = grid[lineIndex];
-    for (let i = 0; i < line.length; i++) {
-      let c = line[i];
+    for (let columnIndex = 0; columnIndex < line.length; columnIndex++) {
+      let char = line[columnIndex];
 
-      if (c === '.') {
-      } else if (c === 'O') {
-        grid[lineIndex][i] = '.';
-        grid[freeRows[i]][i] = 'O';
-        freeRows[i]++;
-      } else {
-        freeRows[i] = lineIndex + 1;
+      if (char === 'O') {
+        grid[lineIndex][columnIndex] = '.';
+        grid[nextFreeLineIndex[columnIndex]][columnIndex] = 'O';
+        nextFreeLineIndex[columnIndex]++;
+      } else if (char === '#') {
+        nextFreeLineIndex[columnIndex] = lineIndex + 1;
       }
     }
   }
 }
 
-function cycle(grid) {
-  north(grid);
-
-  grid = zip(...grid);
-  north(grid);
-
-  grid.forEach((line) => {
-    line.reverse();
-  });
-  grid = zip(...grid);
-  north(grid);
-
-  grid.forEach((line) => {
-    line.reverse();
-  });
-  grid = zip(...grid);
-  north(grid);
-
-  grid.forEach((line) => {
-    line.reverse();
-  });
-  grid = zip(...grid);
-  grid.forEach((line) => {
-    line.reverse();
-  });
-
+function cycle(grid: string[][]) {
+  tiltNorth(grid);
+  grid = rotateGridRight(grid);
+  tiltNorth(grid);
+  grid = rotateGridRight(grid);
+  tiltNorth(grid);
+  grid = rotateGridRight(grid);
+  tiltNorth(grid);
+  grid = rotateGridRight(grid);
   return grid;
 }
 
-function score(grid) {
-  let r = 0;
+function calculateLoad(grid: string[][]) {
+  let load = 0;
 
   for (let lineIndex = 0; lineIndex < grid.length; lineIndex++) {
     let line = grid[lineIndex];
-    for (let i = 0; i < line.length; i++) {
-      let c = line[i];
-      if (c === 'O') {
-        r += grid.length - lineIndex;
+    for (let columnIndex = 0; columnIndex < line.length; columnIndex++) {
+      let char = line[columnIndex];
+      if (char === 'O') {
+        load += grid.length - lineIndex;
       }
     }
   }
 
-  return r;
+  return load;
 }
 
 export function calc(input: string) {
-  let lines = splitLines(input);
+  let grid: string[][] = splitGrid(input);
 
-  let freeRows = new Array(lines[0].length).fill(0);
+  let gridKeyToCycleIndex = {};
+  let cycleIndexToLoad = {};
 
-  let grid = lines.map((s) => s.split(''));
-
-  let was = {};
-
-  for (let i = 0; i < 500; i++) {
+  for (let cycleIndex = 0; ; cycleIndex++) {
     grid = cycle(grid);
-    console.log(i + 1, score(grid));
+    cycleIndexToLoad[cycleIndex] = calculateLoad(grid);
 
-    let mapstr = grid.map((l) => l.join('')).join('\n');
-    // console.log('\n' + mapstr);
+    let gridKey = grid.map((l) => l.join('')).join('\n');
+    const previousCycleIndex = gridKeyToCycleIndex[gridKey];
 
-    if (was[mapstr] !== undefined) {
-      console.log('cycle', i - was[mapstr], 'offset', was[mapstr]);
+    if (previousCycleIndex !== undefined) {
+      const loopLength = cycleIndex - previousCycleIndex;
+      const loopRemainder = (1_000_000_000 - previousCycleIndex) % loopLength;
+      return cycleIndexToLoad[loopRemainder + previousCycleIndex - 1];
     }
 
-    was[mapstr] = i;
+    gridKeyToCycleIndex[gridKey] = cycleIndex;
   }
-
-  //
-  //
-  //
-  //
-  //
-  // return lines
-  //   .map((line, lineIndex) => {
-  //     let r = 0;
-  //
-  //     for (let i = 0; i < line.length; i++) {
-  //       let c = line.charAt(i);
-  //       if (c === '.') {
-  //       } else if (c === 'O') {
-  //         r += lines.length - freeRows[i];
-  //         freeRows[i]++;
-  //       } else {
-  //         freeRows[i] = lineIndex + 1;
-  //       }
-  //     }
-  //
-  //     return r;
-  //   })
-  //   .reduce(add, 0);
 }
