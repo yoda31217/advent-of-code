@@ -1,64 +1,46 @@
-import { add } from 'lodash';
+import { find, remove, sum } from 'lodash';
 import { splitByComa } from '../../utils/strings';
 
 function hash(str: string) {
-  let r = 0;
+  let result = 0;
   for (let i = 0; i < str.length; i++) {
-    r += str.charCodeAt(i);
-    r *= 17;
-    r = r % 256;
+    result = ((result + str.charCodeAt(i)) * 17) % 256;
   }
-  return r;
+  return result;
 }
 
 export function calc(input: string) {
   let lines = splitByComa(input);
 
-  let boxes: [string, number][][] = new Array(256);
+  let boxes: { label: string; focalLength: number }[][] = new Array(256);
   for (let i = 0; i < 256; i++) {
     boxes[i] = [];
   }
 
-  console.log(lines);
-
-  lines.forEach((line, lineIndex) => {
+  lines.forEach((line) => {
     if (line.endsWith('-')) {
       let label = line.substring(0, line.length - 1);
-      let lineHash = hash(label);
-      let box = boxes[lineHash];
-      for (let i = 0; i < box.length; i++) {
-        if (box[i][0] === label) {
-          box.splice(i, 1);
-          return;
-        }
-      }
+      let labelHash = hash(label);
+      let box = boxes[labelHash];
+      remove(box, (lens) => lens.label === label);
     } else {
       let label = line.split('=')[0];
       let lineHash = hash(label);
       let box = boxes[lineHash];
-      let fl = Number(line.split('=')[1]);
-      for (let i = 0; i < box.length; i++) {
-        if (box[i][0] === label) {
-          box.splice(i, 1, [label, fl]);
-          return;
-        }
+      let newFocalLength = Number(line.split('=')[1]);
+      let lens = find(box, (lens) => lens.label === label);
+      if (lens) {
+        lens.focalLength = newFocalLength;
+      } else {
+        box.push({ label, focalLength: newFocalLength });
       }
-      box.push([label, fl]);
     }
   });
 
-  // console.log('------', line);
-  for (let i = 0; i < boxes.length; i++) {
-    if (boxes[i].length > 0) {
-      console.log(i, boxes[i] + '');
-    }
-  }
-
-  return boxes
-    .map((box, bi) => {
-      let s = box.map((s, si) => s[1] * (si + 1)).reduce(add, 0);
-
-      return (bi + 1) * s;
-    })
-    .reduce(add, 0);
+  return sum(
+    boxes.map((box, boxIndex) => {
+      let boxResult = sum(box.map((lens, lensIndex) => lens.focalLength * (lensIndex + 1)));
+      return (boxIndex + 1) * boxResult;
+    }),
+  );
 }
