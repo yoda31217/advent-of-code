@@ -26,3 +26,11 @@ export function rotateGridRight<T>(grid: T[][]) {
 
   return newGrid;
 }
+
+export function initArray<T>(size: number, initElement: () => T): T[] {
+  let array: T[] = new Array(size);
+  for (let i = 0; i < size; i++) {
+    array[i] = initElement();
+  }
+  return array;
+}

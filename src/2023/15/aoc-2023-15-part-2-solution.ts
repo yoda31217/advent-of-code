@@ -1,4 +1,5 @@
 import { find, remove, sum } from 'lodash';
+import { initArray } from '../../utils/arrays';
 import { splitByComa } from '../../utils/strings';
 
 function hash(str: string) {
@@ -12,10 +13,7 @@ function hash(str: string) {
 export function calc(input: string) {
   let lines = splitByComa(input);
 
-  let boxes: { label: string; focalLength: number }[][] = new Array(256);
-  for (let i = 0; i < 256; i++) {
-    boxes[i] = [];
-  }
+  const boxes: { label: string; focalLength: number }[][] = initArray(256, () => []);
 
   lines.forEach((line) => {
     if (line.endsWith('-')) {
