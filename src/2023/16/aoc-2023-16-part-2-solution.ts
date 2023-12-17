@@ -67,68 +67,44 @@ export function calc2(grid: string[][], startBeam: [[number, number], [number, n
 
       was[key] = true;
 
-      // i++;
-      // if (i > 30) {
-      //   return 999;
-      // }
-
       let char = grid[y][x];
-      // console.log(y, x, dy, dx, char, beams);
 
       energized[y][x] = true;
 
-      if (char === '.') {
-        x += dx;
-        y += dy;
-      } else if (char === '-') {
-        if (dy !== 0) {
-          beams.push([
+      if (char === '-' && dy !== 0) {
+        beams.push(
+          [
             [y, x - 1],
             [0, -1],
-          ]);
-          beams.push([
+          ],
+          [
             [y, x + 1],
             [0, 1],
-          ]);
-          break;
-        } else {
-          x += dx;
-          y += dy;
-        }
-      } else if (char === '|') {
-        if (dx !== 0) {
-          beams.push([
+          ],
+        );
+        break;
+      } else if (char === '|' && dx !== 0) {
+        beams.push(
+          [
             [y - 1, x],
             [-1, 0],
-          ]);
-          beams.push([
+          ],
+          [
             [y + 1, x],
             [1, 0],
-          ]);
-          break;
-        } else {
-          x += dx;
-          y += dy;
-        }
+          ],
+        );
+        break;
       } else if (char === '\\') {
-        let t = dx;
-        dx = dy;
-        dy = t;
-        x += dx;
-        y += dy;
-      } else {
-        let t = -dx;
-        dx = -dy;
-        dy = t;
-        x += dx;
-        y += dy;
+        [dx, dy] = [dy, dx];
+      } else if (char === '/') {
+        [dx, dy] = [-dy, -dx];
       }
+
+      x += dx;
+      y += dy;
     }
   }
 
-  const res = energized.map((s) => s.filter((i) => i).length).reduce(add, 0);
-
-  // console.log(startBeam, res);
-
-  return res;
+  return energized.map((s) => s.filter((i) => i).length).reduce(add, 0);
 }
