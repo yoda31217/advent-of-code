@@ -1,6 +1,11 @@
 import { initArray } from '../../utils/arrays';
 import { splitGrid } from '../../utils/strings';
 
+function keyy(row, col, dRow, dCol, step) {
+  // return row + '=' + col + '=' + dRow + '=' + dCol + '=' + step;
+  return (row << 18) + (col << 8) + ((dRow + 1) << 6) + ((dCol + 1) << 4) + step;
+}
+
 export function calc(input: string) {
   let grid = splitGrid(input);
   for (let row = 0; row < grid.length; row++) {
@@ -15,7 +20,7 @@ export function calc(input: string) {
   // console.log(grid2);
 
   // let r = initArray(grid2.length, () => initArray(grid2[0].length, () => 999_999_999_999));
-  let r = -1;
+  let r = 1 / 0;
   let pos = [
     [0, 1, 0, 1, 0, 0],
     [1, 0, 1, 0, 0, 0],
@@ -23,7 +28,8 @@ export function calc(input: string) {
 
   let d = initArray(grid2.length, () => initArray(grid2[0].length, () => ''));
 
-  let c = {};
+  let c = [];
+  // let c = new Array(1_000_000_000).fill(undefined);
   let st = {};
 
   let iter = 0;
@@ -64,8 +70,6 @@ export function calc(input: string) {
       continue;
     }
 
-    let k = `${row}=${col}=${dRow}=${dCol}=${step}`;
-
     // let k = `${row}=${col}=${dRow}=${dCol}`;
     // let k1 = `${row}=${col}=${dRow * -1}=${dCol * -1}`;
     // let k2 = `${row}=${col}=${dCol * -1}=${dRow * -1}`;
@@ -74,8 +78,8 @@ export function calc(input: string) {
     // console.log(k, k2, k3);
     //
     let toStop = false;
-    for (let i = 0; i <= step; i++) {
-      if (c[`${row}=${col}=${dRow}=${dCol}=${i}`] <= sum) {
+    for (let i = 3; i <= step; i++) {
+      if (c[keyy(row, col, dRow, dCol, i)] <= sum) {
         toStop = true;
         break;
       }
@@ -126,6 +130,7 @@ export function calc(input: string) {
     //   pos.push([row + dRow, col + dCol, dRow, dCol, step + 1, sum]);
     // }
 
+    let k = keyy(row, col, dRow, dCol, step);
     c[k] = sum;
     st[k] = step;
 
