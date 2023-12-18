@@ -116,6 +116,20 @@ export function calc(input: string) {
     //   c[`${row}=${col}=${dRow}=${dCol}=${1}`] <= sum ||
     //   c[`${row}=${col}=${dRow}=${dCol}=${2}`] <= sum;
     let cachedGsumBst = false;
+    for (let i = step; i <= 10; i++) {
+      if (c[keyy(row, col, dRow, dCol, i)] <= sum) {
+        cachedGsumBst = true;
+        break;
+      }
+    }
+    if (!cachedGsumBst) {
+      for (let i = 3; i <= 10; i++) {
+        if (c[keyy(row, col, -dRow, -dCol, i)] <= sum) {
+          cachedGsumBst = true;
+          break;
+        }
+      }
+    }
     // let cachedBsumGst = (c[k2] && c[k2] <= sum) || (c[k3] && c[k3] <= sum);
     let cachedBsumGst = false;
     // let cachedBsumGst =
