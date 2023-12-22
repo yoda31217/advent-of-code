@@ -9,5 +9,6 @@ cd "$(dirname "$0")"
 rm -rf ./build
 
 cd ./src
+# npx ts-node ./index.ts $1 $2 $3 $4 > ./1.txt
 npx ts-node ./index.ts $1 $2 $3 $4
 
