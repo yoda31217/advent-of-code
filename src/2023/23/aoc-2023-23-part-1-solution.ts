@@ -13,14 +13,22 @@ export function calc(input: string) {
 
   console.log(sr, sc);
 
-  let q: [number, number, number, any][] = [[sr, sc, 0, {}]];
+  let q: [number, number, number, any][] = [[sr, sc, 0, []]];
 
   let result = [];
 
+  let gcache = {};
+
+  let i = 0;
+
   while (q.length > 0) {
+    // let [r, c, steps, cache] = q.shift();
     let [r, c, steps, cache] = q.pop();
 
-    // console.log(r, c, steps, values(cache).length, q.length);
+    i++;
+    if (i % 10_000 === 0) {
+      console.log(r, c, steps, cache.length, q.length);
+    }
 
     const tile = grid?.[r]?.[c];
 
@@ -54,17 +62,23 @@ export function calc(input: string) {
       steps++;
     }
 
-    let key = r + '=' + c;
+    // let key = r + '=' + c;
+    let key = r * 150 + c;
     if (cache[key]) {
       continue;
     }
 
     cache[key] = steps;
 
-    q.push([r + 1, c, steps + 1, { ...cache }]);
-    q.push([r - 1, c, steps + 1, { ...cache }]);
-    q.push([r, c + 1, steps + 1, { ...cache }]);
-    q.push([r, c - 1, steps + 1, { ...cache }]);
+    // if (gcache[key] && gcache[key] >= steps) {
+    //   continue;
+    // }
+    // gcache[key] = steps;
+
+    q.push([r + 1, c, steps + 1, cache.slice(0)]);
+    q.push([r - 1, c, steps + 1, cache.slice(0)]);
+    q.push([r, c + 1, steps + 1, cache.slice(0)]);
+    q.push([r, c - 1, steps + 1, cache.slice(0)]);
   }
 
   return max(result);
