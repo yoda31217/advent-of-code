@@ -3,7 +3,7 @@ import { inv, multiply } from 'mathjs';
 import { splitByComaNumbers, splitLines } from '../../utils/strings';
 
 function isInt(n: number) {
-  return Math.abs(Math.round(n) - n) < 0.0000000001;
+  return Math.abs((Math.round(n) - n) / n) < 0.000_000_000_01;
 }
 
 function isIntersect([h0x, h0y, h0z, h0vx, h0vy, h0hz]: number[], [h1x, h1y, h1z, h1vx, h1vy, h1hz]: number[]) {
@@ -52,6 +52,7 @@ function isIntersect([h0x, h0y, h0z, h0vx, h0vy, h0hz]: number[], [h1x, h1y, h1z
 }
 
 function findKCand(hails: number[][], [vxk, vyk, vzk]: number[]) {
+  // let start = new Date().getTime();
   for (let i = 0; i < hails.length - 1; i++) {
     let [x1, y1, z1, vx1, vy1, vz1] = hails[i];
     let [x2, y2, z2, vx2, vy2, vz2] = hails[i + 1];
@@ -59,12 +60,18 @@ function findKCand(hails: number[][], [vxk, vyk, vzk]: number[]) {
     // console.log('Cand:', vxk, vyk, vzk);
 
     try {
+      const dvx1 = vxk - vx1;
+      const dvy1 = vyk - vy1;
+      const dvz1 = vzk - vz1;
+      const dvx2 = vxk - vx2;
+      const dvy2 = vyk - vy2;
+
       let A = [
-        [1, 0, 0, vxk - vx1, 0],
-        [0, 1, 0, vyk - vy1, 0],
-        [0, 0, 1, vzk - vz1, 0],
-        [1, 0, 0, 0, vxk - vx2],
-        [0, 1, 0, 0, vyk - vy2],
+        [1, 0, 0, dvx1, 0],
+        [0, 1, 0, dvy1, 0],
+        [0, 0, 1, dvz1, 0],
+        [1, 0, 0, 0, dvx2],
+        [0, 1, 0, 0, dvy2],
       ];
       let b = [x1, y1, z1, x2, y2];
 
@@ -72,16 +79,23 @@ function findKCand(hails: number[][], [vxk, vyk, vzk]: number[]) {
 
       // console.log(xk, yk, zk, t1, t2);
 
+      // let finish = new Date().getTime();
+      // console.log('findCand iter:', i, finish - start);
       if (!(isInt(xk) && isInt(yk) && isInt(zk) && isInt(t1) && isInt(t2) && t1 > 0 && t2 > 0)) {
+        // console.log('isnull');
         return null;
       }
 
-      return [xk, yk, zk, vxk, vyk, vzk];
-    } catch (_) {
+      const res1 = [xk, yk, zk, vxk, vyk, vzk].map(Math.round);
+      return res1;
+    } catch (e) {
+      console.log(e);
       continue;
     }
   }
 
+  // let finish = new Date().getTime();
+  // console.log('findCand iter full:', hails.length, finish - start);
   return null;
 }
 
@@ -90,57 +104,49 @@ export function calc(input: string) {
 
   let hails = lines.map((line) => line.replace('@', ',')).map(splitByComaNumbers);
 
-  let low = 200000000000000;
-  // let low = 7;
-  let high = 400000000000000;
-  // let high = 27;
-  //
-  //
-
-  // let x1 = 19;
-  // let y1 = 13;
-  // let z1 = 30;
-  // let vx1 = -2;
-  // let vy1 = 1;
-  // let vz1 = -2;
-  //
-  // let x2 = 18;
-  // let y2 = 19;
-  // let vx2 = -1;
-  // let vy2 = -1;
-
-  // let vxk = -3;
-  // let vyk = 1;
-  // let vzk = 2;
-  //
-
   let results = [];
 
   let k = 0;
 
-  for (let vxk = -100; vxk <= 100; vxk++) {
-    for (let vyk = -100; vyk <= 100; vyk++) {
-      for (let vzk = -100; vzk <= 100; vzk++) {
+  let subHails = hails.slice(0, 10);
+
+  for (let vxk = -500; vxk <= 500; vxk++) {
+    for (let vyk = -500; vyk <= 500; vyk++) {
+      for (let vzk = -500; vzk <= 500; vzk++) {
         k++;
-        if (k % 10000 === 0) {
-          console.log('Iter', k, vxk, vyk, vzk);
+        if (k % 10_0_000 === 0) {
+          console.log('Iter', k, vxk, vyk, vzk, 'results:', results.length, new Date());
         }
 
         let kCand = findKCand(hails, [vxk, vyk, vzk]);
+        // console.log(kCand);
         if (kCand === null) {
           continue;
         }
 
-        let r = hails.every((hail) => {
-          return (
-            isIntersect(hail, kCand) &&
-            isIntersect([hail[0], hail[2], 0, hail[3], hail[5], 0], [kCand[0], kCand[2], 0, kCand[3], kCand[5], 0])
-          );
-        });
-        // console.log(kCand, r);
-        if (r) {
-          results.push(kCand);
+        // console.log('Good candidate!!!!!', kCand);
+
+        let bad = false;
+
+        for (let i = 0; i < subHails.length; i++) {
+          const hail = subHails[i];
+          if (
+            !(
+              isIntersect(hail, kCand) &&
+              isIntersect([hail[0], hail[2], 0, hail[3], hail[5], 0], [kCand[0], kCand[2], 0, kCand[3], kCand[5], 0])
+            )
+          ) {
+            bad = true;
+            break;
+          }
         }
+
+        if (bad) {
+          continue;
+        }
+
+        // console.log(kCand, r);
+        results.push(kCand);
       }
     }
   }
