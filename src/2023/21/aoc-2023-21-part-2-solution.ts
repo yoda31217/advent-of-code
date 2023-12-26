@@ -193,16 +193,12 @@ export function calc(input: string) {
   let mss = 6;
   console.log(startRow, startCol, rows, cols);
 
-  // let resGrid = dij(grid, startRow, startCol);
-  // resGrid.forEach((l, li) =>
-  //   console.log(
-  //     l
-  //       .map((d, di) => (d === undefined ? '###' : d <= mss && (li + di) % 2 === 0 ? d + '' : ' ').padStart(4, ' '))
-  //       .join('  '),
-  //   ),
-  // );
-  //
-  // console.log('-----!@#');
+  let resGrid = dij(grid, startRow, startCol);
+  resGrid.forEach((l, li) =>
+    console.log(l.map((d, di) => (d === undefined ? '###' : d + '').padStart(4, ' ')).join('  ')),
+  );
+
+  console.log('-----!@#');
   //
   // resGrid = dij(grid, 0, 0);
   // resGrid.forEach((l) => console.log(l.map((d) => (d === undefined ? '###' : d + '').padStart(4, ' ')).join(', ')));
@@ -227,6 +223,7 @@ export function calc(input: string) {
   // console.log(calc1(grid, 0, 0, 1000));
   // console.log(calc1(grid, 0, 0, 1001));
 
+  return 0;
   console.log('=====');
   // console.log('0=0,0', slow(grid, startRow, startCol, 0));
   // console.log('1=2,4', slow(grid, startRow, startCol, 1));
